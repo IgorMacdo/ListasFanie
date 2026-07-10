@@ -36,16 +36,16 @@ export const GiftCard: React.FC<GiftCardProps> = ({
           />
         ) : null}
         
-        {/* Placeholder com gradiente de revelação */}
-        <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gradient-to-tr from-sky-100 to-pink-100">
-          <span className="text-3xl">🧸</span>
+        {/* Placeholder com gradiente de enxoval */}
+        <div className="absolute inset-0 -z-10 flex items-center justify-center bg-gradient-to-tr from-sky-100 to-emerald-100">
+          <span className="text-3xl">📦</span>
         </div>
 
         {/* Badge de Reservado */}
         {is_reserved && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] transition-all duration-300">
             <span className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold tracking-wider text-slate-800 shadow-lg">
-              🎀 RESERVADO
+              🎁 RESERVADO
             </span>
           </div>
         )}

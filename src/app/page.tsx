@@ -8,16 +8,23 @@ import { ReservationModal } from '@/components/ReservationModal';
 
 // Lista de presentes mockada para fallback inicial (quando o Supabase não está configurado)
 const INITIAL_MOCK_GIFTS: Gift[] = [
-  { id: '1', name: 'Banheira Ergonômica', description: 'sugestão de cor: Branca ou Cinza', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '2', name: 'Bebê Conforto', description: 'Para passear de carro com segurança', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '3', name: 'Fralda Descartável (Tamanho P)', description: 'Qualquer marca de boa qualidade', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '4', name: 'Fralda Descartável (Tamanho M)', description: 'Qualquer marca de boa qualidade', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '5', name: 'Fralda Descartável (Tamanho G)', description: 'Qualquer marca de boa qualidade', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '6', name: 'Kit Body Manga Curta (3 unidades)', description: 'Tamanho M - Algodão antialérgico', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '7', name: 'Kit Body Manga Longa (3 unidades)', description: 'Tamanho G - Estampas neutras', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '8', name: 'Manta de Soft Hipoalergênica', description: 'Toque macio para aquecer o bebê', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '9', name: 'Kit Higiene Completo', description: 'Pente, escova macia, cortador de unha', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
-  { id: '10', name: 'Termômetro Digital de Testa', description: 'Leitura rápida e precisa', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '1', name: 'Balde', description: 'Balde plástico reforçado (sugestão: 10L ou 15L)', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '2', name: 'Cesto de roupas', description: 'Cesto organizador para roupas sujas ou limpas', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '3', name: 'Escova de limpeza', description: 'Escova com cerdas firmes para lavanderia', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '4', name: 'Ferro de passar', description: 'Ferro de passar roupas a vapor ou seco', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '5', name: 'Máquina (lava e seca)', description: 'Ajuda de custo para a máquina de lavar e secar', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '6', name: 'Mop de limpeza', description: 'Mop giratório ou spray com refil microfibra', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '7', name: 'Pá de lixo', description: 'Pá de lixo resistente com cabo longo', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '8', name: 'Pano de chão', description: 'Kit com panos de chão de algodão alvejado', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '9', name: 'Pano de limpeza/estopa', description: 'Kit de panos de microfibra multiuso', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '10', name: 'Porta-sabão', description: 'Organizador ou porta-sabão em pó/líquido para lavanderia', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '11', name: 'Prateleiras ou Torre de limpeza', description: 'Organizador vertical para produtos de limpeza', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '12', name: 'Kit de Pregador de roupa', description: 'Pregadores de madeira ou plástico resistentes', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '13', name: 'Vassoura', description: 'Vassoura de pelo macio para pisos internos', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '14', name: 'Rodo', description: 'Rodo duplo com borracha EVA aderente', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '15', name: 'Sapateira', description: 'Sapateira organizadora para o hall ou quarto', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '16', name: 'Tábua de passar', description: 'Tábua de passar roupas dobrável e acolchoada', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() },
+  { id: '17', name: 'Varal (chão ou embutir)', description: 'Varal dobrável de chão ou varal de teto/embutido', image_url: '', is_reserved: false, reserved_by: null, reserved_at: null, created_at: new Date().toISOString() }
 ];
 
 export default function GuestPage() {
@@ -137,16 +144,16 @@ export default function GuestPage() {
       {/* Hero Header */}
       <header className="relative overflow-hidden py-16 text-center">
         {/* Enfeites de fundo decorativos */}
-        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-pink-100/50 blur-xl" />
+        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-emerald-100/50 blur-xl" />
         <div className="absolute -bottom-6 right-1/4 h-32 w-32 rounded-full bg-sky-100/50 blur-xl" />
 
         <div className="relative mx-auto max-w-2xl px-4">
-          <span className="text-4xl">👼</span>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-4xl md:text-5xl bg-gradient-to-r from-sky-400 to-pink-400 bg-clip-text text-transparent">
-            Chá de Revelação
+          <span className="text-4xl">🏡</span>
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-4xl md:text-5xl bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">
+            Chá de Casa Nova
           </h1>
           <p className="mt-3 text-lg font-medium text-slate-500">
-            Seja bem-vindo(a) à nossa lista de presentes! Escolha um item abaixo e nos ajude a preparar a chegada do nosso amor.
+            Seja bem-vindo(a) à nossa lista de enxoval! Escolha um item abaixo para nos ajudar a montar e equipar nossa casa nova.
           </p>
 
           {isUsingMock && (

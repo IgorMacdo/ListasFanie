@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chá de Revelação | Listas Fanie",
-  description: "Escolha e reserve o presente para o chá de revelação em tempo real.",
+  title: "Chá de Casa Nova | Listas Fanie",
+  description: "Escolha e reserve itens da nossa lista de enxoval de casa nova em tempo real.",
 };
 
 export default function RootLayout({

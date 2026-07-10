@@ -221,7 +221,7 @@ export default function AdminDashboard() {
               ⚙️ Painel de Controle Fanie
             </h1>
             <p className="text-sm text-slate-500 mt-1">
-              Gerencie a lista de presentes do chá de revelação
+              Gerencie a lista de enxoval da casa nova
             </p>
           </div>
           <div className="flex gap-3">

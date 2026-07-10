@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
             Acesso Organizadora
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Insira a senha do painel para gerenciar os presentes do chá de revelação.
+            Insira a senha do painel para gerenciar a lista de enxoval da casa nova.
           </p>
         </div>
 
