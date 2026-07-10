@@ -144,20 +144,20 @@ export default function GuestPage() {
       {/* Hero Header */}
       <header className="relative overflow-hidden py-16 text-center">
         {/* Enfeites de fundo decorativos */}
-        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-emerald-100/50 blur-xl" />
-        <div className="absolute -bottom-6 right-1/4 h-32 w-32 rounded-full bg-sky-100/50 blur-xl" />
+        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-pastel-green/30 blur-xl" />
+        <div className="absolute -bottom-6 right-1/4 h-32 w-32 rounded-full bg-pastel-yellow/30 blur-xl" />
 
         <div className="relative mx-auto max-w-2xl px-4">
           <span className="text-4xl">🏡</span>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-4xl md:text-5xl bg-gradient-to-r from-sky-400 to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-4xl md:text-5xl bg-gradient-to-r from-emerald-600 via-amber-500 to-rose-500 bg-clip-text text-transparent">
             Chá de Casa Nova
           </h1>
-          <p className="mt-3 text-lg font-medium text-slate-500">
+          <p className="mt-3 text-lg font-medium text-slate-600">
             Seja bem-vindo(a) à nossa lista de enxoval! Escolha um item abaixo para nos ajudar a montar e equipar nossa casa nova.
           </p>
 
           {isUsingMock && (
-            <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-amber-50 px-4 py-1.5 text-xs font-semibold text-amber-700 border border-amber-200">
+            <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold text-amber-800 border border-pastel-yellow">
               <span>💡</span>
               <span>Modo Demonstrativo (LocalStorage ativo). Configure o Supabase para salvar na nuvem!</span>
             </div>
@@ -179,7 +179,7 @@ export default function GuestPage() {
                   onClick={() => setFilter(type)}
                   className={`border-b-2 px-1 pb-4 text-sm font-semibold transition-all ${
                     active
-                      ? 'border-pink-400 text-pink-500'
+                      ? 'border-pastel-red text-rose-700'
                       : 'border-transparent text-slate-400 hover:border-slate-300 hover:text-slate-600'
                   }`}
                 >

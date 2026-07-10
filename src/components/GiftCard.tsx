@@ -98,7 +98,7 @@ export const GiftCard: React.FC<GiftCardProps> = ({
               className={`w-full rounded-xl py-3 text-sm font-semibold tracking-wide shadow-sm transition-all duration-200 ${
                 is_reserved
                   ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                  : 'bg-gradient-to-r from-sky-400 to-pink-400 text-white hover:from-sky-500 hover:to-pink-500 active:scale-[0.98]'
+                  : 'bg-gradient-to-r from-pastel-green to-pastel-yellow text-slate-800 hover:opacity-95 shadow-sm shadow-pastel-yellow/20 active:scale-[0.98]'
               }`}
             >
               {is_reserved ? 'Já Reservado' : 'Reservar Presente'}

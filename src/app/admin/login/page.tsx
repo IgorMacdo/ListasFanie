@@ -45,8 +45,8 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       {/* Decorações */}
-      <div className="absolute -top-10 left-1/3 h-48 w-48 rounded-full bg-pink-100/40 blur-2xl" />
-      <div className="absolute -bottom-10 right-1/3 h-48 w-48 rounded-full bg-sky-100/40 blur-2xl" />
+      <div className="absolute -top-10 left-1/3 h-48 w-48 rounded-full bg-pastel-red/20 blur-2xl" />
+      <div className="absolute -bottom-10 right-1/3 h-48 w-48 rounded-full bg-pastel-yellow/20 blur-2xl" />
 
       <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 shadow-2xl animate-fade-in relative z-10">
         <div className="text-center">
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Digite a senha..."
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition-all text-slate-800"
+              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
               disabled={loading}
             />
           </div>
@@ -94,7 +94,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-xl bg-gradient-to-r from-sky-400 to-pink-400 py-3 text-sm font-semibold text-white hover:from-sky-500 hover:to-pink-500 shadow-md active:scale-[0.98] transition-all disabled:opacity-60"
+              className="flex-1 rounded-xl bg-gradient-to-r from-pastel-green to-pastel-yellow py-3 text-sm font-semibold text-slate-800 hover:opacity-95 shadow-md shadow-pastel-yellow/10 active:scale-[0.98] transition-all disabled:opacity-60"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>

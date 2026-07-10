@@ -1,32 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdfbfc;
-  --foreground: #1e293b;
-  --gender-reveal-pink: #fbcfe8;
-  --gender-reveal-blue: #bae6fd;
+  --background: #fff7f0; /* Bege */
+  --foreground: #2d2a26; /* Texto escuro quente */
+  --pastel-yellow: #fbd683; /* Amarelo pastel */
+  --pastel-red: #f3b8b9; /* Vermelho pastel */
+  --pastel-green: #d2d892; /* Verde pastel */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-reveal-pink: var(--gender-reveal-pink);
-  --color-reveal-blue: var(--gender-reveal-blue);
+  --color-pastel-yellow: var(--pastel-yellow);
+  --color-pastel-red: var(--pastel-red);
+  --color-pastel-green: var(--pastel-green);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: radial-gradient(circle at 10% 20%, rgba(251, 207, 232, 0.15) 0%, rgba(186, 230, 253, 0.15) 90%), #fafaf9;
+  /* Gradiente radial combinando as 3 cores pastel sobre o fundo bege */
+  background: radial-gradient(circle at 10% 20%, rgba(210, 216, 146, 0.12) 0%, rgba(251, 214, 131, 0.12) 45%, rgba(243, 184, 185, 0.12) 90%), var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), sans-serif;
 }
 
 /* Glassmorphism styling helper */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Animations */

@@ -261,7 +261,7 @@ export default function AdminDashboard() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ex: Fralda M (Pacote)"
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition-all text-slate-800"
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
                   disabled={creating}
                 />
               </div>
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ex: Sugestão de cor azul, tamanho M"
                   rows={3}
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition-all text-slate-800"
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
                   disabled={creating}
                 />
               </div>
@@ -290,7 +290,7 @@ export default function AdminDashboard() {
                   id="gift-image"
                   accept="image/*"
                   onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                  className="mt-2 w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer"
+                  className="mt-2 w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-pastel-yellow/20 file:text-amber-800 hover:file:bg-pastel-yellow/35 cursor-pointer"
                   disabled={creating}
                 />
               </div>
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
               <button
                 type="submit"
                 disabled={creating}
-                className="w-full rounded-xl bg-gradient-to-r from-sky-400 to-pink-400 py-3 text-sm font-semibold text-white hover:from-sky-500 hover:to-pink-500 shadow-sm active:scale-[0.98] transition-all disabled:opacity-60"
+                className="w-full rounded-xl bg-gradient-to-r from-pastel-green to-pastel-yellow py-3 text-sm font-semibold text-slate-800 hover:opacity-95 shadow-sm active:scale-[0.98] transition-all disabled:opacity-60"
               >
                 {creating ? 'Salvando...' : 'Adicionar à Lista'}
               </button>

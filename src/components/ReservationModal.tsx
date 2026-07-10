@@ -76,7 +76,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
               placeholder="Ex: Maria Souza"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100 transition-all text-slate-800"
+              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
               autoFocus
               disabled={loading}
             />
@@ -100,7 +100,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-xl bg-gradient-to-r from-sky-400 to-pink-400 py-3 text-sm font-semibold text-white hover:from-sky-500 hover:to-pink-500 shadow-md shadow-pink-100 active:scale-[0.98] transition-all disabled:opacity-55"
+              className="flex-1 rounded-xl bg-gradient-to-r from-pastel-green to-pastel-yellow py-3 text-sm font-semibold text-slate-800 hover:opacity-95 shadow-md shadow-pastel-yellow/10 active:scale-[0.98] transition-all disabled:opacity-55"
             >
               {loading ? 'Reservando...' : 'Confirmar'}
             </button>
