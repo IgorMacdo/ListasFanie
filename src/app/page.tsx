@@ -47,11 +47,11 @@ export default function GuestPage() {
     if (!isSupabaseConfigured()) {
       // Usa fallback no localStorage
       setIsUsingMock(true);
-      const savedGifts = localStorage.getItem('lists_fanie_gifts');
+      const savedGifts = localStorage.getItem('lists_fanie_house_gifts');
       if (savedGifts) {
         setGifts(JSON.parse(savedGifts));
       } else {
-        localStorage.setItem('lists_fanie_gifts', JSON.stringify(INITIAL_MOCK_GIFTS));
+        localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(INITIAL_MOCK_GIFTS));
         setGifts(INITIAL_MOCK_GIFTS);
       }
       setLoading(false);
@@ -70,7 +70,7 @@ export default function GuestPage() {
     } catch (err) {
       console.warn('Erro ao conectar ao Supabase, alternando para modo LocalStorage:', err);
       setIsUsingMock(true);
-      const savedGifts = localStorage.getItem('lists_fanie_gifts') || JSON.stringify(INITIAL_MOCK_GIFTS);
+      const savedGifts = localStorage.getItem('lists_fanie_house_gifts') || JSON.stringify(INITIAL_MOCK_GIFTS);
       setGifts(JSON.parse(savedGifts));
     } finally {
       setLoading(false);
@@ -113,7 +113,7 @@ export default function GuestPage() {
           : g
       );
       setGifts(updatedGifts);
-      localStorage.setItem('lists_fanie_gifts', JSON.stringify(updatedGifts));
+      localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
       return;
     }
 

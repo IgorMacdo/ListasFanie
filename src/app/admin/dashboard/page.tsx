@@ -29,7 +29,7 @@ export default function AdminDashboard() {
     setLoading(true);
     if (!isSupabaseConfigured()) {
       setIsUsingMock(true);
-      const savedGifts = localStorage.getItem('lists_fanie_gifts');
+      const savedGifts = localStorage.getItem('lists_fanie_house_gifts');
       if (savedGifts) {
         setGifts(JSON.parse(savedGifts));
       } else {
@@ -51,7 +51,7 @@ export default function AdminDashboard() {
     } catch (err) {
       console.warn('Erro ao conectar ao Supabase no admin, alternando para modo LocalStorage:', err);
       setIsUsingMock(true);
-      const savedGifts = localStorage.getItem('lists_fanie_gifts') || '[]';
+      const savedGifts = localStorage.getItem('lists_fanie_house_gifts') || '[]';
       setGifts(JSON.parse(savedGifts));
     } finally {
       setLoading(false);
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
 
         const updatedGifts = [newGift, ...gifts];
         setGifts(updatedGifts);
-        localStorage.setItem('lists_fanie_gifts', JSON.stringify(updatedGifts));
+        localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
       } else {
         const { error } = await supabase.from('gifts').insert({
           name: name.trim(),
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
         g.id === giftId ? { ...g, is_reserved: false, reserved_by: null, reserved_at: null } : g
       );
       setGifts(updatedGifts);
-      localStorage.setItem('lists_fanie_gifts', JSON.stringify(updatedGifts));
+      localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
       return;
     }
 
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
     if (isUsingMock) {
       const updatedGifts = gifts.filter((g) => g.id !== giftId);
       setGifts(updatedGifts);
-      localStorage.setItem('lists_fanie_gifts', JSON.stringify(updatedGifts));
+      localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
       return;
     }
 
