@@ -35,7 +35,7 @@ O Supabase gerenciará o banco de dados dos presentes, as fotos (Storage) e as a
    );
 
    -- Habilitar o sistema de tempo real (Realtime) na tabela
-   alter publish replication_group_publication add table gifts;
+   alter publication supabase_realtime add table gifts;
    ```
 
 ### Passo 1.3: Ativar o Realtime no Painel do Supabase
