@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   // Estados do formulário de criação
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [buyLink, setBuyLink] = useState('');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState('');
@@ -132,6 +133,7 @@ export default function AdminDashboard() {
           reserved_by: null,
           reserved_at: null,
           created_at: new Date().toISOString(),
+          buy_link: buyLink.trim() || null,
         };
 
         const updatedGifts = [newGift, ...gifts];
@@ -142,6 +144,7 @@ export default function AdminDashboard() {
           name: name.trim(),
           description: description.trim() || null,
           image_url: imageUrl || null,
+          buy_link: buyLink.trim() || null,
         });
 
         if (error) throw error;
@@ -151,6 +154,7 @@ export default function AdminDashboard() {
       // Limpa formulário
       setName('');
       setDescription('');
+      setBuyLink('');
       setImageFile(null);
       // Reseta o input de arquivo visualmente
       const fileInput = document.getElementById('gift-image') as HTMLInputElement;
@@ -166,7 +170,14 @@ export default function AdminDashboard() {
   const handleReleaseReservation = async (giftId: string) => {
     if (isUsingMock) {
       const updatedGifts = gifts.map((g) =>
-        g.id === giftId ? { ...g, is_reserved: false, reserved_by: null, reserved_at: null } : g
+        g.id === giftId ? { 
+          ...g, 
+          is_reserved: false, 
+          reserved_by: null, 
+          reserved_phone: null,
+          contribution_type: null,
+          reserved_at: null 
+        } : g
       );
       setGifts(updatedGifts);
       localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
@@ -179,6 +190,8 @@ export default function AdminDashboard() {
         .update({
           is_reserved: false,
           reserved_by: null,
+          reserved_phone: null,
+          contribution_type: null,
           reserved_at: null,
         })
         .eq('id', giftId);
@@ -276,6 +289,21 @@ export default function AdminDashboard() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Ex: Sugestão de cor azul, tamanho M"
                   rows={3}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                  disabled={creating}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="gift-link" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Link de Compra (Opcional)
+                </label>
+                <input
+                  type="url"
+                  id="gift-link"
+                  value={buyLink}
+                  onChange={(e) => setBuyLink(e.target.value)}
+                  placeholder="Ex: https://www.magazinevoce.com.br/..."
                   className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
                   disabled={creating}
                 />

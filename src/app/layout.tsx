@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chá de Casa Nova | Listas Fanie",
+  title: "Chá de Casa Nova | Sthefanie & Daniel",
   description: "Escolha e reserve itens da nossa lista de enxoval de casa nova em tempo real.",
 };
 

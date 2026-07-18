@@ -35,6 +35,39 @@ export default function GuestPage() {
   const [isUsingMock, setIsUsingMock] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Estados do temporizador regressivo
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Efeito para o countdown
+  useEffect(() => {
+    setIsMounted(true);
+    // Data alvo: 14 de Setembro de 2026 às 15:00h
+    const targetDate = new Date('2026-09-14T15:00:00-03:00').getTime();
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference <= 0) {
+        clearInterval(interval);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      } else {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        setTimeLeft({ days, hours, minutes, seconds });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleScrollToGifts = () => {
+    document.getElementById('gifts-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   // Verifica se o Supabase está configurado corretamente
   const isSupabaseConfigured = () => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -104,12 +137,24 @@ export default function GuestPage() {
     setIsModalOpen(true);
   };
 
-  const handleConfirmReservation = async (giftId: string, guestName: string) => {
+  const handleConfirmReservation = async (
+    giftId: string, 
+    guestName: string, 
+    guestPhone: string, 
+    contributionType: 'link' | 'qrcode'
+  ) => {
     if (isUsingMock) {
       // Grava no localStorage localmente
       const updatedGifts = gifts.map((g) =>
         g.id === giftId
-          ? { ...g, is_reserved: true, reserved_by: guestName, reserved_at: new Date().toISOString() }
+          ? { 
+              ...g, 
+              is_reserved: true, 
+              reserved_by: guestName, 
+              reserved_phone: guestPhone,
+              contribution_type: contributionType,
+              reserved_at: new Date().toISOString() 
+            }
           : g
       );
       setGifts(updatedGifts);
@@ -123,6 +168,8 @@ export default function GuestPage() {
       .update({
         is_reserved: true,
         reserved_by: guestName,
+        reserved_phone: guestPhone,
+        contribution_type: contributionType,
         reserved_at: new Date().toISOString(),
       })
       .eq('id', giftId);
@@ -142,31 +189,112 @@ export default function GuestPage() {
   return (
     <div className="flex-1 flex flex-col pb-20">
       {/* Hero Header */}
-      <header className="relative overflow-hidden py-16 text-center">
+      <header className="relative overflow-hidden py-10 md:py-16">
         {/* Enfeites de fundo decorativos */}
-        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-pastel-green/30 blur-xl" />
-        <div className="absolute -bottom-6 right-1/4 h-32 w-32 rounded-full bg-pastel-yellow/30 blur-xl" />
-
-        <div className="relative mx-auto max-w-2xl px-4">
-          <span className="text-4xl">🏡</span>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-800 sm:text-4xl md:text-5xl bg-gradient-to-r from-emerald-600 via-amber-500 to-rose-500 bg-clip-text text-transparent">
-            Chá de Casa Nova
-          </h1>
-          <p className="mt-3 text-lg font-medium text-slate-600">
-            Seja bem-vindo(a) à nossa lista de enxoval! Escolha um item abaixo para nos ajudar a montar e equipar nossa casa nova.
-          </p>
-
-          {isUsingMock && (
-            <div className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold text-amber-800 border border-pastel-yellow">
-              <span>💡</span>
-              <span>Modo Demonstrativo (LocalStorage ativo). Configure o Supabase para salvar na nuvem!</span>
+        <div className="absolute -top-12 left-1/4 h-24 w-24 rounded-full bg-pastel-green/30 blur-xl animate-pulse" />
+        <div className="absolute -bottom-6 right-1/4 h-32 w-32 rounded-full bg-pastel-yellow/30 blur-xl animate-pulse" />
+        
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 md:grid-cols-2 items-center">
+            {/* Coluna 1: Imagem do Convite */}
+            <div className="flex justify-center md:justify-end">
+              <div className="relative group max-w-sm w-full transition-all duration-500 ease-out hover:scale-[1.02] hover:-rotate-1">
+                {/* Efeito de sombra/borda brilhante decorativa */}
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-pastel-green via-pastel-yellow to-pastel-red opacity-50 blur-lg transition duration-1000 group-hover:opacity-75 group-hover:duration-200" />
+                <div className="relative overflow-hidden rounded-2xl border-4 border-white bg-white shadow-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="/convite.png" 
+                    alt="Convite Enxoval de Casa Nova - Sthefanie e Daniel" 
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* Coluna 2: Informações e Countdown */}
+            <div className="text-center md:text-left flex flex-col items-center md:items-start">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-pastel-green/30 px-4 py-1 text-sm font-semibold text-emerald-800 border border-pastel-green/50">
+                🏡 Chá de Casa Nova
+              </span>
+              <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-800 sm:text-5xl md:text-6xl">
+                <span className="block text-slate-800">Sthefanie &</span>
+                <span className="block mt-1 bg-gradient-to-r from-emerald-600 via-amber-500 to-rose-500 bg-clip-text text-transparent">Daniel</span>
+              </h1>
+              <p className="mt-4 text-lg font-medium text-slate-600 max-w-md">
+                Venha celebrar conosco e conhecer nosso novo lar! Escolha um item abaixo na lista de presentes para nos ajudar a montar nossa casa.
+              </p>
+
+              {/* Event Info Cards */}
+              <div className="mt-6 w-full max-w-md grid gap-3 grid-cols-3">
+                <div className="glass p-3 rounded-xl text-center shadow-xs">
+                  <div className="text-xl">📅</div>
+                  <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Data</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5">14 Set</div>
+                </div>
+                <div className="glass p-3 rounded-xl text-center shadow-xs">
+                  <div className="text-xl">🕒</div>
+                  <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Hora</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5">15:00h</div>
+                </div>
+                <div className="glass p-3 rounded-xl text-center shadow-xs">
+                  <div className="text-xl">📍</div>
+                  <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Local</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5 truncate" title="Rua Alegre, 123, Joinville - SC">Joinville</div>
+                </div>
+              </div>
+
+              {/* Countdown Timer */}
+              {isMounted && (
+                <div className="mt-8 w-full max-w-md">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider text-center md:text-left mb-3">
+                    Contagem Regressiva para o Chá:
+                  </h3>
+                  <div className="flex justify-center md:justify-start gap-3">
+                    {[
+                      { label: 'Dias', value: timeLeft.days },
+                      { label: 'Horas', value: timeLeft.hours },
+                      { label: 'Min', value: timeLeft.minutes },
+                      { label: 'Seg', value: timeLeft.seconds },
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex flex-col items-center">
+                        <div className="glass h-14 w-14 sm:h-16 sm:w-16 flex items-center justify-center rounded-xl shadow-sm border border-white">
+                          <span className="text-xl sm:text-2xl font-black text-slate-700 font-mono tracking-tight">
+                            {String(item.value).padStart(2, '0')}
+                          </span>
+                        </div>
+                        <span className="text-[10px] sm:text-xs font-semibold text-slate-500 mt-1">{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Call To Action */}
+              <div className="flex flex-col sm:flex-row gap-4 items-center mt-8">
+                <button 
+                  onClick={handleScrollToGifts}
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-600/20 transition-all hover:bg-emerald-700 hover:shadow-emerald-700/30 hover:scale-[1.02] cursor-pointer"
+                >
+                  <span>Ver Lista de Presentes</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </button>
+
+                {isUsingMock && (
+                  <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-[10px] font-semibold text-amber-800 shadow-xs">
+                    <span>💡 Modo Demo</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Grid e Filtros */}
-      <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <main id="gifts-section" className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 scroll-mt-8">
         {/* Abas de filtro */}
         <div className="flex justify-center border-b border-slate-200 pb-px">
           <div className="flex gap-6">
