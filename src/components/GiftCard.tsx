@@ -58,9 +58,13 @@ export const GiftCard: React.FC<GiftCardProps> = ({
           {description || "Sem observações específicas."}
         </p>
 
-        {is_reserved && reserved_by && (
+        {is_reserved && (
           <div className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600 border border-slate-100 space-y-1">
-            <div>Escolhido por: <span className="font-semibold text-slate-800">{reserved_by}</span></div>
+            {isAdmin && reserved_by ? (
+              <div>Escolhido por: <span className="font-semibold text-slate-800">{reserved_by}</span></div>
+            ) : (
+              <div className="font-medium text-slate-450 italic">🎁 Este item já foi reservado!</div>
+            )}
             {isAdmin && gift.reserved_phone && (
               <div>Celular: <span className="font-semibold text-slate-800">{gift.reserved_phone}</span></div>
             )}
