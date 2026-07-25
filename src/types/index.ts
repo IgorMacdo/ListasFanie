@@ -11,3 +11,15 @@ export interface Gift {
   contribution_type?: string | null;
   buy_link?: string | null;
 }
+
+export interface EventSettings {
+  id: number;
+  couple_names: string;
+  description: string;
+  event_date: string;
+  date_display: string;
+  time_display: string;
+  location_name: string;
+  location_address: string;
+  image_url: string;
+}

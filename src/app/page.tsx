@@ -2,9 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Gift } from '@/types';
+import { Gift, EventSettings } from '@/types';
 import { GiftCard } from '@/components/GiftCard';
 import { ReservationModal } from '@/components/ReservationModal';
+
+// Configurações do evento padrão (fallback)
+const DEFAULT_SETTINGS: EventSettings = {
+  id: 1,
+  couple_names: "Sthefanie & Daniel",
+  description: "Venha celebrar conosco e conhecer nosso novo lar! Escolha um item abaixo na lista de presentes para nos ajudar a montar nossa casa.",
+  event_date: "2026-09-14T15:00:00-03:00",
+  date_display: "14 Set",
+  time_display: "15:00h",
+  location_name: "Joinville",
+  location_address: "Rua Alegre, 123, Joinville - SC",
+  image_url: "/convite.png"
+};
 
 // Lista de presentes mockada para fallback inicial (quando o Supabase não está configurado)
 const INITIAL_MOCK_GIFTS: Gift[] = [
@@ -35,6 +48,9 @@ export default function GuestPage() {
   const [isUsingMock, setIsUsingMock] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Estado das configurações do evento
+  const [settings, setSettings] = useState<EventSettings>(DEFAULT_SETTINGS);
+
   // Estados do temporizador regressivo
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isMounted, setIsMounted] = useState(false);
@@ -42,14 +58,13 @@ export default function GuestPage() {
   // Efeito para o countdown
   useEffect(() => {
     setIsMounted(true);
-    // Data alvo: 14 de Setembro de 2026 às 15:00h
-    const targetDate = new Date('2026-09-14T15:00:00-03:00').getTime();
+    const targetDate = new Date(settings.event_date).getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const difference = targetDate - now;
 
-      if (difference <= 0) {
+      if (isNaN(difference) || difference <= 0) {
         clearInterval(interval);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       } else {
@@ -62,7 +77,32 @@ export default function GuestPage() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [settings.event_date]);
+
+  // Função para buscar configurações do evento
+  const fetchSettings = async () => {
+    if (!isSupabaseConfigured()) {
+      const savedSettings = localStorage.getItem('lists_fanie_event_settings');
+      if (savedSettings) {
+        setSettings(JSON.parse(savedSettings));
+      }
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('event_settings')
+        .select('*')
+        .eq('id', 1)
+        .single();
+      
+      if (error) throw error;
+      if (data) {
+        setSettings(data);
+      }
+    } catch (err) {
+      console.warn('Erro ao carregar configurações do evento, usando padrão:', err);
+    }
+  };
 
   const handleScrollToGifts = () => {
     document.getElementById('gifts-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -112,10 +152,11 @@ export default function GuestPage() {
 
   useEffect(() => {
     fetchGifts();
+    fetchSettings();
 
     // Configura o Realtime apenas se estiver usando a base do Supabase
     if (isSupabaseConfigured()) {
-      const channel = supabase
+      const giftsChannel = supabase
         .channel('gifts-realtime')
         .on(
           'postgres_changes',
@@ -126,8 +167,20 @@ export default function GuestPage() {
         )
         .subscribe();
 
+      const settingsChannel = supabase
+        .channel('settings-realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'event_settings' },
+          () => {
+            fetchSettings();
+          }
+        )
+        .subscribe();
+
       return () => {
-        supabase.removeChannel(channel);
+        supabase.removeChannel(giftsChannel);
+        supabase.removeChannel(settingsChannel);
       };
     }
   }, []);
@@ -204,8 +257,8 @@ export default function GuestPage() {
                 <div className="relative overflow-hidden rounded-2xl border-4 border-white bg-white shadow-xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
-                    src="/convite.png" 
-                    alt="Convite Enxoval de Casa Nova - Sthefanie e Daniel" 
+                    src={settings.image_url} 
+                    alt={`Convite Enxoval de Casa Nova - ${settings.couple_names}`} 
                     className="w-full h-auto object-cover"
                   />
                 </div>
@@ -218,11 +271,11 @@ export default function GuestPage() {
                 🏡 Chá de Casa Nova
               </span>
               <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-slate-800 sm:text-5xl md:text-6xl">
-                <span className="block text-slate-800">Sthefanie &</span>
-                <span className="block mt-1 bg-gradient-to-r from-emerald-600 via-amber-500 to-rose-500 bg-clip-text text-transparent">Daniel</span>
+                <span className="block text-slate-800">{settings.couple_names.split('&')[0]?.trim()} &</span>
+                <span className="block mt-1 bg-gradient-to-r from-emerald-600 via-amber-500 to-rose-500 bg-clip-text text-transparent">{settings.couple_names.split('&')[1]?.trim() || ''}</span>
               </h1>
               <p className="mt-4 text-lg font-medium text-slate-600 max-w-md">
-                Venha celebrar conosco e conhecer nosso novo lar! Escolha um item abaixo na lista de presentes para nos ajudar a montar nossa casa.
+                {settings.description}
               </p>
 
               {/* Event Info Cards */}
@@ -230,17 +283,17 @@ export default function GuestPage() {
                 <div className="glass p-3 rounded-xl text-center shadow-xs">
                   <div className="text-xl">📅</div>
                   <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Data</div>
-                  <div className="text-sm font-bold text-slate-700 mt-0.5">14 Set</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5">{settings.date_display}</div>
                 </div>
                 <div className="glass p-3 rounded-xl text-center shadow-xs">
                   <div className="text-xl">🕒</div>
                   <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Hora</div>
-                  <div className="text-sm font-bold text-slate-700 mt-0.5">15:00h</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5">{settings.time_display}</div>
                 </div>
                 <div className="glass p-3 rounded-xl text-center shadow-xs">
                   <div className="text-xl">📍</div>
                   <div className="text-[11px] font-bold text-slate-400 mt-1 uppercase">Local</div>
-                  <div className="text-sm font-bold text-slate-700 mt-0.5 truncate" title="Rua Alegre, 123, Joinville - SC">Joinville</div>
+                  <div className="text-sm font-bold text-slate-700 mt-0.5 truncate" title={settings.location_address}>{settings.location_name}</div>
                 </div>
               </div>
 

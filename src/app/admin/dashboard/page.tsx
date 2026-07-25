@@ -3,8 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Gift } from '@/types';
+import { Gift, EventSettings } from '@/types';
 import { GiftCard } from '@/components/GiftCard';
+
+const DEFAULT_SETTINGS: EventSettings = {
+  id: 1,
+  couple_names: "Sthefanie & Daniel",
+  description: "Venha celebrar conosco e conhecer nosso novo lar! Escolha um item abaixo na lista de presentes para nos ajudar a montar nossa casa.",
+  event_date: "2026-09-14T15:00:00-03:00",
+  date_display: "14 Set",
+  time_display: "15:00h",
+  location_name: "Joinville",
+  location_address: "Rua Alegre, 123, Joinville - SC",
+  image_url: "/convite.png"
+};
 
 export default function AdminDashboard() {
   const [gifts, setGifts] = useState<Gift[]>([]);
@@ -19,6 +31,13 @@ export default function AdminDashboard() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState('');
+
+  // Estados para as Configurações do Evento
+  const [eventSettings, setEventSettings] = useState<EventSettings>(DEFAULT_SETTINGS);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsSuccess, setSettingsSuccess] = useState(false);
+  const [settingsError, setSettingsError] = useState('');
+  const [invitationFile, setInvitationFile] = useState<File | null>(null);
 
   const isSupabaseConfigured = () => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -59,9 +78,95 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchSettings = async () => {
+    if (!isSupabaseConfigured()) {
+      const savedSettings = localStorage.getItem('lists_fanie_event_settings');
+      if (savedSettings) {
+        setEventSettings(JSON.parse(savedSettings));
+      }
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('event_settings')
+        .select('*')
+        .eq('id', 1)
+        .single();
+      
+      if (error) throw error;
+      if (data) {
+        setEventSettings(data);
+      }
+    } catch (err) {
+      console.warn('Erro ao carregar configurações do evento no admin, usando padrão:', err);
+    }
+  };
+
   useEffect(() => {
     fetchGifts();
+    fetchSettings();
   }, []);
+
+  const handleUpdateSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsLoading(true);
+    setSettingsError('');
+    setSettingsSuccess(false);
+
+    try {
+      let imageUrl = eventSettings.image_url;
+
+      if (invitationFile) {
+        if (!isSupabaseConfigured()) {
+          imageUrl = await convertToBase64(invitationFile);
+        } else {
+          const fileExt = invitationFile.name.split('.').pop();
+          const fileName = `invitation-${Date.now()}.${fileExt}`;
+          const filePath = `settings/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('gift-images')
+            .upload(filePath, invitationFile);
+
+          if (uploadError) throw uploadError;
+
+          const { data } = supabase.storage
+            .from('gift-images')
+            .getPublicUrl(filePath);
+
+          imageUrl = data.publicUrl;
+        }
+      }
+
+      const updatedSettings = {
+        ...eventSettings,
+        id: 1,
+        image_url: imageUrl,
+      };
+
+      if (!isSupabaseConfigured()) {
+        localStorage.setItem('lists_fanie_event_settings', JSON.stringify(updatedSettings));
+        setEventSettings(updatedSettings);
+      } else {
+        const { error } = await supabase
+          .from('event_settings')
+          .upsert(updatedSettings);
+
+        if (error) throw error;
+        setEventSettings(updatedSettings);
+      }
+
+      setSettingsSuccess(true);
+      setInvitationFile(null);
+      const invitationInput = document.getElementById('event-image') as HTMLInputElement;
+      if (invitationInput) invitationInput.value = '';
+    } catch (err: unknown) {
+      console.error(err);
+      setSettingsError('Erro ao atualizar configurações. Verifique a conexão e as permissões.');
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -256,8 +361,9 @@ export default function AdminDashboard() {
 
       <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-10 grid gap-8 lg:grid-cols-3">
         
-        {/* Formulário de cadastro de presente */}
-        <section className="lg:col-span-1">
+        {/* Coluna da Esquerda: Formulários */}
+        <div className="lg:col-span-1 space-y-8">
+          {/* Formulário de cadastro de presente */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-md">
             <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
               ➕ Cadastrar Presente
@@ -338,7 +444,164 @@ export default function AdminDashboard() {
               </button>
             </form>
           </div>
-        </section>
+
+          {/* Novo Formulário: Editar Informações do Convite */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-md">
+            <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+              📝 Informações do Convite
+            </h2>
+
+            <form onSubmit={handleUpdateSettings} className="space-y-4">
+              <div>
+                <label htmlFor="event-couple" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Nomes do Casal (com &)
+                </label>
+                <input
+                  type="text"
+                  id="event-couple"
+                  value={eventSettings.couple_names}
+                  onChange={(e) => setEventSettings({ ...eventSettings, couple_names: e.target.value })}
+                  placeholder="Ex: Sthefanie & Daniel"
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                  disabled={settingsLoading}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="event-desc" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Mensagem de Boas-Vindas
+                </label>
+                <textarea
+                  id="event-desc"
+                  value={eventSettings.description}
+                  onChange={(e) => setEventSettings({ ...eventSettings, description: e.target.value })}
+                  placeholder="Mensagem do topo do site..."
+                  rows={3}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                  disabled={settingsLoading}
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="event-date" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Data/Hora do Evento (para Contagem Regressiva)
+                </label>
+                <input
+                  type="datetime-local"
+                  id="event-date"
+                  // Converte o formato ISO (com timezone) para o formato compatível com input datetime-local (YYYY-MM-DDTHH:MM)
+                  value={eventSettings.event_date ? new Date(eventSettings.event_date).toISOString().slice(0, 16) : ''}
+                  onChange={(e) => setEventSettings({ ...eventSettings, event_date: new Date(e.target.value).toISOString() })}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                  disabled={settingsLoading}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="event-date-display" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                    Data Texto (Card)
+                  </label>
+                  <input
+                    type="text"
+                    id="event-date-display"
+                    value={eventSettings.date_display}
+                    onChange={(e) => setEventSettings({ ...eventSettings, date_display: e.target.value })}
+                    placeholder="Ex: 14 Set"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                    disabled={settingsLoading}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="event-time-display" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                    Hora Texto (Card)
+                  </label>
+                  <input
+                    type="text"
+                    id="event-time-display"
+                    value={eventSettings.time_display}
+                    onChange={(e) => setEventSettings({ ...eventSettings, time_display: e.target.value })}
+                    placeholder="Ex: 15:00h"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                    disabled={settingsLoading}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="event-loc-name" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                    Local Texto (Card)
+                  </label>
+                  <input
+                    type="text"
+                    id="event-loc-name"
+                    value={eventSettings.location_name}
+                    onChange={(e) => setEventSettings({ ...eventSettings, location_name: e.target.value })}
+                    placeholder="Ex: Joinville"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                    disabled={settingsLoading}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="event-loc-address" className="block text-[10px] font-semibold text-slate-600 uppercase tracking-wider">
+                    Endereço Completo
+                  </label>
+                  <input
+                    type="text"
+                    id="event-loc-address"
+                    value={eventSettings.location_address}
+                    onChange={(e) => setEventSettings({ ...eventSettings, location_address: e.target.value })}
+                    placeholder="Ex: Rua Alegre, 123"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                    disabled={settingsLoading}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="event-image" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Nova Imagem do Convite (Opcional)
+                </label>
+                <input
+                  type="file"
+                  id="event-image"
+                  accept="image/*"
+                  onChange={(e) => setInvitationFile(e.target.files?.[0] || null)}
+                  className="mt-2 w-full text-xs text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-pastel-yellow/20 file:text-amber-800 hover:file:bg-pastel-yellow/35 cursor-pointer"
+                  disabled={settingsLoading}
+                />
+              </div>
+
+              {settingsError && (
+                <p className="text-xs text-rose-500 font-medium">
+                  ⚠️ {settingsError}
+                </p>
+              )}
+
+              {settingsSuccess && (
+                <p className="text-xs text-emerald-600 font-semibold">
+                  ✅ Configurações salvas com sucesso!
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={settingsLoading}
+                className="w-full rounded-xl bg-slate-800 py-3 text-sm font-semibold text-white hover:bg-slate-900 shadow-sm active:scale-[0.98] transition-all disabled:opacity-60"
+              >
+                {settingsLoading ? 'Salvando...' : 'Salvar Convite'}
+              </button>
+            </form>
+          </div>
+        </div>
 
         {/* Listagem de presentes para gerenciamento */}
         <section className="lg:col-span-2">
