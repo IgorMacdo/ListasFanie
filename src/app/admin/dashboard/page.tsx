@@ -31,6 +31,7 @@ export default function AdminDashboard() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [creating, setCreating] = useState(false);
   const [formError, setFormError] = useState('');
+  const [editingGift, setEditingGift] = useState<Gift | null>(null);
 
   // Estados para as Configurações do Evento
   const [eventSettings, setEventSettings] = useState<EventSettings>(DEFAULT_SETTINGS);
@@ -192,7 +193,27 @@ export default function AdminDashboard() {
     });
   };
 
-  const handleCreateGift = async (e: React.FormEvent) => {
+  const handleEditClick = (gift: Gift) => {
+    setEditingGift(gift);
+    setName(gift.name);
+    setDescription(gift.description || '');
+    setBuyLink(gift.buy_link || '');
+    setFormError('');
+    // Rola suavemente até o formulário lateral
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingGift(null);
+    setName('');
+    setDescription('');
+    setBuyLink('');
+    setFormError('');
+    const fileInput = document.getElementById('gift-image') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
+
+  const handleSubmitGift = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
       setFormError('O nome do presente é obrigatório.');
@@ -202,7 +223,7 @@ export default function AdminDashboard() {
     setCreating(true);
 
     try {
-      let imageUrl = '';
+      let imageUrl = editingGift ? editingGift.image_url : '';
 
       if (imageFile) {
         if (isUsingMock) {
@@ -229,44 +250,79 @@ export default function AdminDashboard() {
       }
 
       if (isUsingMock) {
-        const newGift: Gift = {
-          id: Math.random().toString(36).substring(2) + Date.now(),
-          name: name.trim(),
-          description: description.trim() || null,
-          image_url: imageUrl || null,
-          is_reserved: false,
-          reserved_by: null,
-          reserved_at: null,
-          created_at: new Date().toISOString(),
-          buy_link: buyLink.trim() || null,
-        };
+        if (editingGift) {
+          // Modo Edição (LocalStorage)
+          const updatedGifts = gifts.map((g) =>
+            g.id === editingGift.id
+              ? {
+                  ...g,
+                  name: name.trim(),
+                  description: description.trim() || null,
+                  image_url: imageUrl || null,
+                  buy_link: buyLink.trim() || null,
+                }
+              : g
+          );
+          setGifts(updatedGifts);
+          localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
+        } else {
+          // Modo Criação (LocalStorage)
+          const newGift: Gift = {
+            id: Math.random().toString(36).substring(2) + Date.now(),
+            name: name.trim(),
+            description: description.trim() || null,
+            image_url: imageUrl || null,
+            is_reserved: false,
+            reserved_by: null,
+            reserved_at: null,
+            created_at: new Date().toISOString(),
+            buy_link: buyLink.trim() || null,
+          };
 
-        const updatedGifts = [newGift, ...gifts];
-        setGifts(updatedGifts);
-        localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
+          const updatedGifts = [newGift, ...gifts];
+          setGifts(updatedGifts);
+          localStorage.setItem('lists_fanie_house_gifts', JSON.stringify(updatedGifts));
+        }
       } else {
-        const { error } = await supabase.from('gifts').insert({
-          name: name.trim(),
-          description: description.trim() || null,
-          image_url: imageUrl || null,
-          buy_link: buyLink.trim() || null,
-        });
+        if (editingGift) {
+          // Modo Edição (Supabase)
+          const { error } = await supabase
+            .from('gifts')
+            .update({
+              name: name.trim(),
+              description: description.trim() || null,
+              image_url: imageUrl || null,
+              buy_link: buyLink.trim() || null,
+            })
+            .eq('id', editingGift.id);
 
-        if (error) throw error;
-        await fetchGifts();
+          if (error) throw error;
+          await fetchGifts();
+        } else {
+          // Modo Criação (Supabase)
+          const { error } = await supabase.from('gifts').insert({
+            name: name.trim(),
+            description: description.trim() || null,
+            image_url: imageUrl || null,
+            buy_link: buyLink.trim() || null,
+          });
+
+          if (error) throw error;
+          await fetchGifts();
+        }
       }
 
-      // Limpa formulário
+      // Limpa formulário e reseta modo de edição
       setName('');
       setDescription('');
       setBuyLink('');
       setImageFile(null);
-      // Reseta o input de arquivo visualmente
+      setEditingGift(null);
       const fileInput = document.getElementById('gift-image') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
     } catch (err: unknown) {
       console.error(err);
-      setFormError('Erro ao criar o presente. Verifique a conexão.');
+      setFormError(editingGift ? 'Erro ao atualizar o presente. Verifique a conexão.' : 'Erro ao criar o presente. Verifique a conexão.');
     } finally {
       setCreating(false);
     }
@@ -366,10 +422,10 @@ export default function AdminDashboard() {
           {/* Formulário de cadastro de presente */}
           <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-md">
             <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-              ➕ Cadastrar Presente
+              {editingGift ? '✏️ Editar Presente' : '➕ Cadastrar Presente'}
             </h2>
 
-            <form onSubmit={handleCreateGift} className="space-y-4">
+            <form onSubmit={handleSubmitGift} className="space-y-4">
               <div>
                 <label htmlFor="gift-name" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Nome do Item
@@ -417,7 +473,7 @@ export default function AdminDashboard() {
 
               <div>
                 <label htmlFor="gift-image" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  Foto do Item (Opcional)
+                  Foto do Item (Opcional {editingGift && ' - envie para trocar a atual'})
                 </label>
                 <input
                   type="file"
@@ -435,13 +491,25 @@ export default function AdminDashboard() {
                 </p>
               )}
 
-              <button
-                type="submit"
-                disabled={creating}
-                className="w-full rounded-xl bg-gradient-to-r from-pastel-green to-pastel-yellow py-3 text-sm font-semibold text-slate-800 hover:opacity-95 shadow-sm active:scale-[0.98] transition-all disabled:opacity-60"
-              >
-                {creating ? 'Salvando...' : 'Adicionar à Lista'}
-              </button>
+              <div className="flex gap-3">
+                {editingGift && (
+                  <button
+                    type="button"
+                    onClick={handleCancelEdit}
+                    disabled={creating}
+                    className="flex-1 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-500 hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer text-center"
+                  >
+                    Cancelar
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={creating}
+                  className="flex-2 w-full rounded-xl bg-gradient-to-r from-pastel-green to-pastel-yellow py-3 text-sm font-semibold text-slate-800 hover:opacity-95 shadow-sm active:scale-[0.98] transition-all disabled:opacity-60"
+                >
+                  {creating ? 'Salvando...' : editingGift ? 'Salvar Alterações' : 'Adicionar à Lista'}
+                </button>
+              </div>
             </form>
           </div>
 
@@ -638,6 +706,8 @@ export default function AdminDashboard() {
                         isAdmin={true}
                         onRelease={handleReleaseReservation}
                         onDelete={handleDeleteGift}
+                        onEdit={handleEditClick}
+                        isEditing={editingGift?.id === gift.id}
                         onReserve={() => {}}
                       />
                     ))}

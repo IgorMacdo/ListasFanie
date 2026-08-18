@@ -7,6 +7,8 @@ interface GiftCardProps {
   isAdmin?: boolean;
   onRelease?: (giftId: string) => void;
   onDelete?: (giftId: string) => void;
+  onEdit?: (gift: Gift) => void;
+  isEditing?: boolean;
 }
 
 export const GiftCard: React.FC<GiftCardProps> = ({
@@ -15,11 +17,19 @@ export const GiftCard: React.FC<GiftCardProps> = ({
   isAdmin = false,
   onRelease,
   onDelete,
+  onEdit,
+  isEditing = false,
 }) => {
   const { name, description, image_url, is_reserved, reserved_by } = gift;
 
   return (
-    <div className={`group relative flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white transition-all duration-300 ${is_reserved ? 'opacity-85 shadow-sm' : 'shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-slate-200'}`}>
+    <div className={`group relative flex flex-col overflow-hidden rounded-2xl border bg-white transition-all duration-300 ${
+      isEditing 
+        ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg scale-[1.01]' 
+        : is_reserved 
+          ? 'border-slate-100 opacity-85 shadow-sm' 
+          : 'border-slate-100 shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-slate-200'
+    }`}>
       
       {/* Imagem do presente */}
       <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
@@ -93,6 +103,13 @@ export const GiftCard: React.FC<GiftCardProps> = ({
                   Disponível
                 </button>
               )}
+              <button
+                onClick={() => onEdit && onEdit(gift)}
+                className="rounded-xl bg-blue-50 px-3 py-2.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors border border-blue-100"
+                title="Editar presente"
+              >
+                ✏️
+              </button>
               <button
                 onClick={() => onDelete && onDelete(gift.id)}
                 className="rounded-xl bg-rose-50 px-3 py-2.5 text-xs font-medium text-rose-600 hover:bg-rose-100 transition-colors border border-rose-100"
