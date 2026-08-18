@@ -112,13 +112,12 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
 
           {/* Coluna 2 (md:col-span-3): Conteúdo dos Passos */}
           <div className="md:col-span-3 flex flex-col justify-between">
-            
-            {/* PASSO 1: Formas de Contribuição */}
+                {/* PASSO 1: Formas de Contribuição */}
             {step === 1 && (
               <div className="flex-1 flex flex-col justify-between animate-fade-in">
                 <div>
                   <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest block">Passo 1 de 2</span>
-                  <h3 className="text-xl font-bold text-slate-800 mt-1 uppercase">Formas de Contribuição</h3>
+                  <h3 className="text-xl font-bold text-slate-800 mt-1 uppercase">Escolher Presente</h3>
                   
                   {/* Descrição */}
                   <div className="mt-4 rounded-2xl bg-amber-50/50 border border-pastel-yellow/30 p-4">
@@ -129,9 +128,9 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
 
                   {/* Opções de compra/pix */}
                   <div className="mt-5 space-y-4">
-                    {/* Link de compra */}
+                    {/* Link de compra de referência */}
                     <div>
-                      <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link para compra online:</span>
+                      <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link de referência (opcional):</span>
                       {gift.buy_link ? (
                         <a 
                           href={gift.buy_link} 
@@ -143,25 +142,9 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                         </a>
                       ) : (
                         <span className="block text-xs font-semibold text-slate-400 italic mt-2">
-                          Nenhum link específico cadastrado. Você pode comprar onde preferir!
+                          Nenhum link cadastrado para este presente. Você pode comprar onde achar melhor!
                         </span>
                       )}
-                    </div>
-
-                    {/* PIX QR Code */}
-                    <div className="flex gap-4 items-center border-t border-slate-100 pt-4">
-                      <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 bg-white border border-slate-200 p-1.5 rounded-xl flex items-center justify-center shadow-xs">
-                        <svg className="h-full w-full text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h4v4H3zM17 3h4v4h-4zM3 17h4v4H3z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM9 9h.01M9 15h.01M15 9h.01M12 12h.01" />
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 5h1M5 10v1M19 10v1M10 19v1M14 10h1M10 14v1" />
-                        </svg>
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Chave Pix Celular (Daniel ou Sthefanie):</span>
-                        <span className="text-sm font-bold text-slate-700 block mt-0.5 select-all">(47) 98765-4321</span>
-                        <span className="text-[10px] font-medium text-slate-500 italic block mt-0.5">Scan me! Aponte a câmera para ler o QR Code</span>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -260,6 +243,44 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                         </label>
                       </div>
                     </div>
+
+                    {/* Conteúdo de Pagamento Condicional */}
+                    {contributionType === 'qrcode' && (
+                      <div className="flex gap-4 items-center border border-slate-100 rounded-2xl bg-slate-50/70 p-4 mt-3 animate-fade-in">
+                        <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 bg-white border border-slate-200 p-1.5 rounded-xl flex items-center justify-center shadow-xs">
+                          <svg className="h-full w-full text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h4v4H3zM17 3h4v4h-4zM3 17h4v4H3z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM9 9h.01M9 15h.01M15 9h.01M12 12h.01" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 5h1M5 10v1M19 10v1M10 19v1M14 10h1M10 14v1" />
+                          </svg>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Chave Pix Celular (Daniel ou Sthefanie):</span>
+                          <span className="text-sm font-bold text-slate-700 block mt-0.5 select-all">(47) 98765-4321</span>
+                          <span className="text-[10px] font-medium text-slate-500 italic block mt-0.5">Aponte a câmera para ler o QR Code</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {contributionType === 'link' && (
+                      <div className="border border-slate-100 rounded-2xl bg-slate-50/70 p-4 mt-3 animate-fade-in">
+                        <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link para compra online:</span>
+                        {gift.buy_link ? (
+                          <a 
+                            href={gift.buy_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-flex items-center gap-1.5 rounded-xl bg-sky-50 border border-sky-200 px-4 py-2.5 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-all cursor-pointer"
+                          >
+                            🔗 Abrir link do produto
+                          </a>
+                        ) : (
+                          <span className="block text-xs font-semibold text-slate-450 italic mt-2">
+                            Nenhum link cadastrado para este presente. Você pode comprar em qualquer loja física ou online!
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
