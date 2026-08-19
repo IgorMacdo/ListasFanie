@@ -18,8 +18,22 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [contributionType, setContributionType] = useState<'link' | 'qrcode'>('qrcode');
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText("00020126470014BR.GOV.BCB.PIX0125faniieoliveira2@gmail.com5204000053039865802BR5925Sthefanie Moraes de Olive6009SAO PAULO62140510kaWCQm73oE63042F6A");
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2000);
+  };
+
+  const handleCopyKey = () => {
+    navigator.clipboard.writeText("faniieoliveira2@gmail.com");
+    setCopiedKey(true);
+    setTimeout(() => setCopiedKey(false), 2000);
+  };
 
   // Reseta os estados toda vez que o modal é aberto ou fechado
   useEffect(() => {
@@ -246,36 +260,122 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
 
                     {/* Conteúdo de Pagamento Condicional */}
                     {contributionType === 'qrcode' && (
-                      <div className="flex gap-4 items-center border border-slate-100 rounded-2xl bg-slate-50/70 p-4 mt-3 animate-fade-in">
-                        <div className="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 bg-white border border-slate-200 p-1.5 rounded-xl flex items-center justify-center shadow-xs">
-                          <svg className="h-full w-full text-slate-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h4v4H3zM17 3h4v4h-4zM3 17h4v4H3z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM9 9h.01M9 15h.01M15 9h.01M12 12h.01" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 5h1M5 10v1M19 10v1M10 19v1M14 10h1M10 14v1" />
-                          </svg>
+                      <div className="mt-4 rounded-3xl border border-slate-100 bg-white overflow-hidden shadow-lg animate-fade-in">
+                        {/* Bloco Roxo (Nubank Style) */}
+                        <div className="bg-[#7C1AEC] p-6 text-white text-center flex flex-col items-center">
+                          <h4 className="text-base font-bold tracking-tight">Use o QR Code do Pix para pagar</h4>
+                          <p className="text-[11px] text-white/80 mt-1 max-w-[280px] leading-relaxed">
+                            Abra o app em que vai fazer a transferência, escaneie a imagem ou cole o código do QR Code
+                          </p>
+
+                          {/* Quadrado do QR Code */}
+                          <div className="mt-4 rounded-2xl bg-white p-3 shadow-md inline-block">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src="/QRCode.jpg"
+                              alt="QR Code Pix"
+                              className="h-32 w-32 object-contain"
+                            />
+                          </div>
+
+                          <div className="mt-4 text-xl font-bold tracking-tight">
+                            R$ 0,00
+                          </div>
+
+                          {/* Botão Copiar Código */}
+                          <button
+                            type="button"
+                            onClick={handleCopyCode}
+                            className="mt-4 w-full rounded-2xl bg-white py-3 text-xs font-bold text-[#7C1AEC] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer shadow-sm"
+                          >
+                            {copiedCode ? (
+                              <>
+                                <span>Código Copiado!</span>
+                                <span className="text-emerald-600">✅</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>Copiar código do QR Code</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                </svg>
+                              </>
+                            )}
+                          </button>
                         </div>
-                        <div>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Chave Pix Celular (Daniel ou Sthefanie):</span>
-                          <span className="text-sm font-bold text-slate-700 block mt-0.5 select-all">(47) 98765-4321</span>
-                          <span className="text-[10px] font-medium text-slate-500 italic block mt-0.5">Aponte a câmera para ler o QR Code</span>
+
+                        {/* Bloco Branco (Chave e Conta) */}
+                        <div className="p-5 bg-white text-left space-y-4">
+                          <p className="text-xs font-bold text-slate-800 text-center">
+                            Ou use a chave Pix
+                          </p>
+                          <hr className="border-slate-100" />
+                          
+                          <div className="space-y-3 text-xs">
+                            {/* Chave Pix Row */}
+                            <div className="flex items-start justify-between gap-4">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Chave Pix</span>
+                              <div className="flex items-center gap-1.5 text-right">
+                                <span className="font-bold text-blue-600 font-mono select-all">faniieoliveira2@gmail.com</span>
+                                <button
+                                  type="button"
+                                  onClick={handleCopyKey}
+                                  className="rounded-lg p-1 hover:bg-slate-100 transition-all cursor-pointer text-slate-400 hover:text-blue-600"
+                                  title="Copiar Chave Pix"
+                                >
+                                  {copiedKey ? (
+                                    <span className="text-emerald-500 font-bold text-[10px]">Copiado!</span>
+                                  ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Nome Row */}
+                            <div className="flex items-start justify-between gap-4">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Nome</span>
+                              <span className="font-bold text-slate-700 text-right">Sthefanie Moraes de Oliveira</span>
+                            </div>
+
+                            {/* CPF Row */}
+                            <div className="flex items-start justify-between gap-4">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">CPF</span>
+                              <span className="font-bold text-slate-700 text-right font-mono">***.716.974-**</span>
+                            </div>
+
+                            {/* Banco Row */}
+                            <div className="flex items-start justify-between gap-4">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Banco</span>
+                              <span className="font-bold text-slate-700 text-right max-w-[200px]">260 - Nu Pagamentos S.A. - Instituição de Pagamento</span>
+                            </div>
+
+                            {/* Identificador Row */}
+                            <div className="flex items-start justify-between gap-4">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Identificador</span>
+                              <span className="font-bold text-slate-700 text-right font-mono">kaWCQm73oE</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
 
                     {contributionType === 'link' && (
-                      <div className="border border-slate-100 rounded-2xl bg-slate-50/70 p-4 mt-3 animate-fade-in">
+                      <div className="border border-slate-100 rounded-3xl bg-slate-50/70 p-5 mt-4 shadow-sm animate-fade-in text-left">
                         <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link para compra online:</span>
                         {gift.buy_link ? (
                           <a 
                             href={gift.buy_link} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="mt-2 inline-flex items-center gap-1.5 rounded-xl bg-sky-50 border border-sky-200 px-4 py-2.5 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-all cursor-pointer"
+                            className="mt-2.5 inline-flex items-center gap-1.5 rounded-xl bg-sky-50 border border-sky-200 px-4 py-2.5 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-all cursor-pointer"
                           >
                             🔗 Abrir link do produto
                           </a>
                         ) : (
-                          <span className="block text-xs font-semibold text-slate-450 italic mt-2">
+                          <span className="block text-xs font-semibold text-slate-450 italic mt-2.5">
                             Nenhum link cadastrado para este presente. Você pode comprar em qualquer loja física ou online!
                           </span>
                         )}
