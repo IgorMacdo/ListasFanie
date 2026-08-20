@@ -82,7 +82,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
       />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-3xl transform overflow-hidden rounded-3xl bg-white p-6 md:p-8 shadow-2xl transition-all border border-slate-100 animate-fade-in relative z-10">
+      <div className="relative w-full max-w-3xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto transform rounded-3xl bg-white p-6 md:p-8 shadow-2xl transition-all border border-slate-100 animate-fade-in relative z-10">
         
         {/* Botão de Fechar */}
         <button
@@ -264,23 +264,23 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                     {contributionType === 'qrcode' && (
                       <div className="mt-4 rounded-3xl border border-slate-100 bg-white overflow-hidden shadow-lg animate-fade-in">
                         {/* Bloco Roxo (Nubank Style) */}
-                        <div className="bg-[#7C1AEC] p-6 text-white text-center flex flex-col items-center">
-                          <h4 className="text-base font-bold tracking-tight">Use o QR Code do Pix para pagar</h4>
-                          <p className="text-[11px] text-white/80 mt-1 max-w-[280px] leading-relaxed">
-                            Abra o app em que vai fazer a transferência, escaneie a imagem ou cole o código do QR Code
+                        <div className="bg-[#7C1AEC] p-4 text-white text-center flex flex-col items-center">
+                          <h4 className="text-sm font-bold tracking-tight">Use o QR Code do Pix para pagar</h4>
+                          <p className="text-[10px] text-white/85 mt-0.5 leading-normal">
+                            Escaneie a imagem ou copie o código abaixo
                           </p>
 
                           {/* Quadrado do QR Code */}
-                          <div className="mt-4 rounded-2xl bg-white p-3 shadow-md inline-block">
+                          <div className="mt-3 rounded-xl bg-white p-2 shadow-sm inline-block">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src="/QRCode.jpg"
                               alt="QR Code Pix"
-                              className="h-32 w-32 object-contain"
+                              className="h-20 w-20 object-contain"
                             />
                           </div>
 
-                          <div className="mt-4 text-xl font-bold tracking-tight">
+                          <div className="mt-2 text-base font-bold tracking-tight">
                             R$ 0,00
                           </div>
 
@@ -288,7 +288,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                           <button
                             type="button"
                             onClick={handleCopyCode}
-                            className="mt-4 w-full rounded-2xl bg-white py-3 text-xs font-bold text-[#7C1AEC] hover:bg-slate-50 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer shadow-sm"
+                            className="mt-3 w-full rounded-xl bg-white py-2 text-[11px] font-bold text-[#7C1AEC] hover:bg-slate-50 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer shadow-xs"
                           >
                             {copiedCode ? (
                               <>
@@ -298,7 +298,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                             ) : (
                               <>
                                 <span>Copiar código do QR Code</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                 </svg>
                               </>
@@ -307,28 +307,28 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                         </div>
 
                         {/* Bloco Branco (Chave e Conta) */}
-                        <div className="p-5 bg-white text-left space-y-4">
-                          <p className="text-xs font-bold text-slate-800 text-center">
+                        <div className="p-3.5 bg-white text-left space-y-3">
+                          <p className="text-[11px] font-bold text-slate-800 text-center">
                             Ou use a chave Pix
                           </p>
                           <hr className="border-slate-100" />
                           
-                          <div className="space-y-3 text-xs">
+                          <div className="space-y-2 text-[11px]">
                             {/* Chave Pix Row */}
                             <div className="flex items-start justify-between gap-4">
-                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Chave Pix</span>
-                              <div className="flex items-center gap-1.5 text-right">
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Chave Pix</span>
+                              <div className="flex items-center gap-1 text-right">
                                 <span className="font-bold text-blue-600 font-mono select-all">faniieoliveira2@gmail.com</span>
                                 <button
                                   type="button"
                                   onClick={handleCopyKey}
-                                  className="rounded-lg p-1 hover:bg-slate-100 transition-all cursor-pointer text-slate-400 hover:text-blue-600"
+                                  className="rounded-lg p-0.5 hover:bg-slate-100 transition-all cursor-pointer text-slate-400 hover:text-blue-600"
                                   title="Copiar Chave Pix"
                                 >
                                   {copiedKey ? (
-                                    <span className="text-emerald-500 font-bold text-[10px]">Copiado!</span>
+                                    <span className="text-emerald-500 font-bold text-[9px]">Copiado!</span>
                                   ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                     </svg>
                                   )}
@@ -338,25 +338,25 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
 
                             {/* Nome Row */}
                             <div className="flex items-start justify-between gap-4">
-                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Nome</span>
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Nome</span>
                               <span className="font-bold text-slate-700 text-right">Sthefanie Moraes de Oliveira</span>
                             </div>
 
                             {/* CPF Row */}
                             <div className="flex items-start justify-between gap-4">
-                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">CPF</span>
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">CPF</span>
                               <span className="font-bold text-slate-700 text-right font-mono">***.716.974-**</span>
                             </div>
 
                             {/* Banco Row */}
                             <div className="flex items-start justify-between gap-4">
-                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Banco</span>
-                              <span className="font-bold text-slate-700 text-right max-w-[200px]">260 - Nu Pagamentos S.A. - Instituição de Pagamento</span>
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Banco</span>
+                              <span className="font-bold text-slate-700 text-right max-w-[180px] leading-tight">260 - Nu Pagamentos S.A.</span>
                             </div>
 
                             {/* Identificador Row */}
                             <div className="flex items-start justify-between gap-4">
-                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[10px]">Identificador</span>
+                              <span className="text-slate-400 font-semibold uppercase tracking-wider text-[9px]">Identificador</span>
                               <span className="font-bold text-slate-700 text-right font-mono">kaWCQm73oE</span>
                             </div>
                           </div>
