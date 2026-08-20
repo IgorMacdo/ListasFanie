@@ -22,4 +22,5 @@ export interface EventSettings {
   location_name: string;
   location_address: string;
   image_url: string;
+  delivery_note?: string;
 }

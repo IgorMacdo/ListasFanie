@@ -16,7 +16,8 @@ const DEFAULT_SETTINGS: EventSettings = {
   time_display: "15:00h",
   location_name: "Joinville",
   location_address: "Rua Alegre, 123, Joinville - SC",
-  image_url: "/convite.png"
+  image_url: "/convite.png",
+  delivery_note: "Envie para o nosso endereço: Rua Alegre, 123 - Centro, Joinville - SC - CEP 89201-000"
 };
 
 // Lista de presentes mockada para fallback inicial (quando o Supabase não está configurado)
@@ -405,6 +406,7 @@ export default function GuestPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmReservation}
+        deliveryNote={settings.delivery_note}
       />
     </div>
   );

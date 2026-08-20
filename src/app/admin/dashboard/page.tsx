@@ -15,7 +15,8 @@ const DEFAULT_SETTINGS: EventSettings = {
   time_display: "15:00h",
   location_name: "Joinville",
   location_address: "Rua Alegre, 123, Joinville - SC",
-  image_url: "/convite.png"
+  image_url: "/convite.png",
+  delivery_note: "Envie para o nosso endereço: Rua Alegre, 123 - Centro, Joinville - SC - CEP 89201-000"
 };
 
 export default function AdminDashboard() {
@@ -632,6 +633,21 @@ export default function AdminDashboard() {
                     required
                   />
                 </div>
+              </div>
+
+              <div>
+                <label htmlFor="event-delivery-note" className="block text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Observação do Endereço de Entrega (Para compras via link)
+                </label>
+                <textarea
+                  id="event-delivery-note"
+                  value={eventSettings.delivery_note || ''}
+                  onChange={(e) => setEventSettings({ ...eventSettings, delivery_note: e.target.value })}
+                  placeholder="Instruções de envio ou endereço completo..."
+                  rows={2}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-pastel-yellow focus:outline-none focus:ring-2 focus:ring-pastel-yellow/20 transition-all text-slate-800"
+                  disabled={settingsLoading}
+                />
               </div>
 
               <div>

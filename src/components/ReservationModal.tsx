@@ -6,6 +6,7 @@ interface ReservationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (giftId: string, name: string, phone: string, contributionType: 'link' | 'qrcode') => Promise<void>;
+  deliveryNote?: string;
 }
 
 export const ReservationModal: React.FC<ReservationModalProps> = ({
@@ -13,6 +14,7 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
   isOpen,
   onClose,
   onConfirm,
+  deliveryNote,
 }) => {
   const [step, setStep] = useState<1 | 2>(1);
   const [guestName, setGuestName] = useState('');
@@ -363,21 +365,30 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
                     )}
 
                     {contributionType === 'link' && (
-                      <div className="border border-slate-100 rounded-3xl bg-slate-50/70 p-5 mt-4 shadow-sm animate-fade-in text-left">
-                        <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link para compra online:</span>
-                        {gift.buy_link ? (
-                          <a 
-                            href={gift.buy_link} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="mt-2.5 inline-flex items-center gap-1.5 rounded-xl bg-sky-50 border border-sky-200 px-4 py-2.5 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-all cursor-pointer"
-                          >
-                            🔗 Abrir link do produto
-                          </a>
-                        ) : (
-                          <span className="block text-xs font-semibold text-slate-450 italic mt-2.5">
-                            Nenhum link cadastrado para este presente. Você pode comprar em qualquer loja física ou online!
-                          </span>
+                      <div className="border border-slate-100 rounded-3xl bg-slate-50/70 p-5 mt-4 shadow-sm animate-fade-in text-left space-y-3">
+                        <div>
+                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Link para compra online:</span>
+                          {gift.buy_link ? (
+                            <a 
+                              href={gift.buy_link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="mt-2 inline-flex items-center gap-1.5 rounded-xl bg-sky-50 border border-sky-200 px-4 py-2.5 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-all cursor-pointer"
+                            >
+                              🔗 Abrir link do produto
+                            </a>
+                          ) : (
+                            <span className="block text-xs font-semibold text-slate-450 italic mt-2">
+                              Nenhum link cadastrado para este presente. Você pode comprar em qualquer loja física ou online!
+                            </span>
+                          )}
+                        </div>
+
+                        {deliveryNote && (
+                          <div className="bg-amber-50/50 border border-pastel-yellow/30 rounded-2xl p-4 text-xs text-slate-700">
+                            <span className="font-bold text-amber-800 block mb-1">📍 Endereço de Entrega:</span>
+                            <p className="leading-relaxed font-medium">{deliveryNote}</p>
+                          </div>
                         )}
                       </div>
                     )}
